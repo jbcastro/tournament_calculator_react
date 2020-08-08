@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import "./styles/App.css";
-import { async, reject } from "q";
+// import { async, reject } from "q";
+import ChipForm from "./ChipForm";
+import StartForm from "./StartForm";
+import TournReview from "./TournReview";
 
 //The Codeslinger's creed
 //I do not click with my hand; he who clicks with his hand has forgotten the face of his father
@@ -16,110 +19,76 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      chipCount: {},
+      chipCount: "p",
       smallBlind: {},
       bigBlind: {},
       level: 1,
-      grade: {}
+      grade: {},
+      outOfCash: false,
+      roundLength: {},
+      result: {},
     };
-    this.handleChangeChip = this.handleChangeChip.bind(this);
-    this.handleChangeSmall = this.handleChangeSmall.bind(this);
-    this.handleChangeBig = this.handleChangeBig.bind(this);
+
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.checkAmount = this.checkAmount.bind(this);
+    this.startStack = this.startStack.bind(this);
+    this.restartForm = this.restartForm.bind(this);
   }
-  handleChangeChip = event => {
-    const value = event.target.value;
-    const valueInt = parseFloat(value);
-    this.setState({ chipCount: valueInt });
-  };
-  handleChangeSmall = event => {
-    const value = event.target.value;
-    const valueInt = parseFloat(value);
-    this.setState({ smallBlind: valueInt });
-  };
-  handleChangeBig = event => {
-    const value = event.target.value;
-    const valueInt = parseFloat(value);
-    this.setState({ bigBlind: valueInt });
-  };
-
-  handleSubmit = (event, prevState) => {
-    const blindsAdd = this.state.bigBlind + this.state.smallBlind;
-    const maths = this.state.chipCount - blindsAdd;
-    this.setState({ chipCount: maths });
-    this.setState(prevState => ({ level: prevState.level + 1 }));
-
-    // filler
-
-    // const checkers = async chipCount => {
-    //   if (chipCount <= 0) {
-    //     return console.log("end it");
-    //   }
-    // };
-
-    // .then(chipCount => {
-    //   if (chipCount <= 0) {
-    //     return console.log("end it");
-    //   }
-    // });
-  };
-
-  checkAmount = () => {
-    const level = this.state.level;
-    const minutes = level * 20;
-    const hours = minutes / 60;
-
-    console.log(
-      "you lasted " + minutes + " minutes" + ", or " + hours + " hours "
-    );
-  };
-
-  render() {
+  handleSubmit = (e) => {
     let chipCount = this.state.chipCount;
-    if (chipCount <= 0) {
-      this.checkAmount();
-    }
+    let smallBlind = e.smallBlind;
+    let bigBlind = e.bigBlind;
+    let level = this.state.level;
+    console.log(smallBlind);
+    let blinds = smallBlind + bigBlind;
+    // console.log(blinds);
+    let newChipCount = chipCount - blinds;
+    console.log(newChipCount);
+    console.log(e.bigBlind);
 
-    return (
-      <div>
-        Level
-        {this.state.level}
-        <form>
-          Starting Stack
-          <p>
-            <input
-              type="number"
-              name="chipCount"
-              value={this.state.chipCount}
-              onChange={this.handleChangeChip}
-            />
-          </p>
-        </form>
-        <form>
-          Big Blind
-          <p>
-            <input
-              type="number"
-              name="bigBlind"
-              value={this.state.bigBlind}
-              onChange={this.handleChangeBig}
-            />
-          </p>
-        </form>
-        <form>
-          Small Blind
-          <p>
-            <input
-              type="number"
-              name="smallBlind"
-              value={this.state.smallBlind}
-              onChange={this.handleChangeSmall}
-            />
-          </p>
-        </form>
-        <button onClick={() => this.handleSubmit()}>Calculate</button>
+    if (newChipCount > 0) {
+      level++;
+      this.setState({ level: level });
+      this.setState({ chipCount: newChipCount });
+    } else {
+      let result = level * this.state.roundLength;
+
+      this.setState({ outOfCash: true });
+      this.setState({ result: result });
+    }
+  };
+
+  startStack = (e) => {
+    let startStack = e.startStack;
+    let roundLength = e.roundLength;
+    this.setState({ chipCount: startStack });
+    this.setState({ roundLength: roundLength });
+  };
+  restartForm = () => {
+    this.setState({ chipCount: "p" });
+    this.setState({ smallBlind: {} });
+    this.setState({ bigBlind: {} });
+    this.setState({ level: 1 });
+    this.setState({ grade: {} });
+    this.setState({ outOfCash: false });
+    this.setState({ roundLength: {} });
+    this.setState({ result: {} });
+  };
+  render() {
+    return this.state.chipCount === "p" ? (
+      <div className="App">
+        <StartForm startStack={this.startStack} />
       </div>
+    ) : this.state.outOfCash === false ? (
+      <div className="App">
+        <ChipForm
+          level={this.state.level}
+          chipCount={this.state.chipCount}
+          handleSubmit={this.handleSubmit}
+          startStack={this.startStack}
+        />
+      </div>
+    ) : (
+      <TournReview result={this.state.result} restartForm={this.restartForm} />
     );
   }
 }
