@@ -1,53 +1,38 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Text } from "informed";
+import ChipForm from "./ChipForm";
 
 const StartForm = (props) => {
   const validate = (value) => {
     if (!value || value.length < 0)
       return "Field must be at least five characters";
   };
-  const tourns = props.tourns;
-  const listItems = !tourns
-    ? ""
-    : tourns.map((tourn) => (
-        <li key={tourn._id}>
-          Name: {tourn.name}
-          <br></br>
-          Casino: {tourn.casino}
-          <br></br>
-          Starting Stack: {tourn.starting}
-          <br></br>
-          Round Length: {tourn.roundLength}
-          <br></br>
-          Result Length: {tourn.resultLength}
-          <br></br>
-          Score: {tourn.score}
-          <br></br>
-          Buyin: {tourn.buyin}
-          <br></br>
-          Per Dollor: {tourn.perDollar}
-          <br></br>
-          Country: {tourn.country}
-          <br></br>
-          State/Province: {tourn.state}
-          <br></br>
-          Area: {tourn.area}
-          <br></br>
-          City: {tourn.city}
-          <br></br>
-        </li>
-      ));
-  return (
+  const [startingInfoSubmitted, setStartingInfoSubmitted] = useState(true);
+  const [staringInfo, setStartingInfo] = React.useState({
+    startStack: {},
+    roundLength: {},
+  });
+  const submitForm = (e) => {
+    props.startStackSubmit(e);
+    setStartingInfoSubmitted(false);
+
+    setStartingInfo({
+      ...staringInfo,
+      roundLength: e.roundLength,
+      startStack: e.startStack,
+    });
+  };
+  return startingInfoSubmitted === true ? (
     <div>
       <br></br>
       <h1>TOURNAMENT CALCULATOR!!1!!!!!!</h1>
-      <Form onSubmit={props.startStack}>
+      <Form onSubmit={submitForm}>
         Starting Stack:
         <Text
           field="startStack"
           type="number"
           validate={validate}
-          initialValue="10"
+          initialValue="10000"
         />
         Round Length:
         <Text
@@ -65,8 +50,12 @@ const StartForm = (props) => {
         />
         <button type="submit">Submit</button>
       </Form>
-      {listItems}
     </div>
+  ) : (
+    <ChipForm
+      startStack={staringInfo.startStack}
+      roundLength={staringInfo.roundLength}
+    ></ChipForm>
   );
 };
 export default StartForm;

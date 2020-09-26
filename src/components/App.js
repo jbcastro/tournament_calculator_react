@@ -4,6 +4,8 @@ import "./styles/App.css";
 import ChipForm from "./ChipForm";
 import StartForm from "./StartForm";
 import TournReview from "./TournReview";
+import AddLocation from "./AddLocation";
+import USAAreas from "../AreasApi";
 let api = "http://localhost:5000/api";
 
 //The Codeslinger's creed
@@ -32,24 +34,57 @@ class App extends Component {
       startingStack: {},
       buyin: {},
       perDollar: {},
+      location: false,
+      country: {},
+      region: {},
+      area: {},
+      city: {},
+      casino: {},
+      usaAreas: USAAreas,
+      casinos: {},
+      tournsLoaded: false,
+      casinosLoaded: false,
+      curItem: {},
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.startStack = this.startStack.bind(this);
+    this.startStackSubmit = this.startStackSubmit.bind(this);
     this.restartForm = this.restartForm.bind(this);
     this.saveData = this.saveData.bind(this);
+    this.setLocation = this.setLocation.bind(this);
+    this.setArea = this.setArea.bind(this);
   }
 
   componentDidMount() {
-    this.callBackendAPI()
+    this.callBackendAPI2()
+      .then((res) => {
+        const casinosData = res.express;
+        this.setState({ casinos: casinosData });
+        this.setState({ casinosLoaded: true });
+      })
+
+      .catch((err) => console.log(err));
+    this.callBackendAPI1()
       .then((res) => {
         const tournsData = res.express;
         this.setState({ tourns: tournsData });
+        this.setState({ tournsLoaded: true });
       })
+
       .catch((err) => console.log(err));
   }
-  callBackendAPI = async () => {
+
+  callBackendAPI1 = async () => {
     const response = await fetch(api);
+    const body = await response.json();
+
+    if (response.status !== 200) {
+      throw Error(body.message);
+    }
+    return body;
+  };
+  callBackendAPI2 = async () => {
+    const response = await fetch(api2);
     const body = await response.json();
 
     if (response.status !== 200) {
@@ -63,16 +98,26 @@ class App extends Component {
     let bigBlind = e.bigBlind;
     let ante = Number(e.ante);
     let level = this.state.level;
-    let blinds1 = smallBlind + bigBlind;
-    let blinds = blinds1 + ante;
-    let newChipCount = chipCount - blinds;
+    let roundLength = this.state.roundLength;
+
+    let numberOfBlinds1 = roundLength / 2;
+
+    let numberOfBlinds = numberOfBlinds1 / 10;
+    console.log(numberOfBlinds);
+    let numberOfAntes = roundLength / 2;
+    let comboBlinds = smallBlind + bigBlind;
+    let totalOfBlinds = comboBlinds * numberOfBlinds;
+    let totalOfAntes = numberOfAntes * ante;
+    let blindsPlusAntes = totalOfAntes + totalOfBlinds;
+
+    let newChipCount = chipCount - blindsPlusAntes;
 
     if (newChipCount > 0) {
       level++;
       this.setState({ level: level });
       this.setState({ chipCount: newChipCount });
     } else {
-      let result = level * this.state.roundLength;
+      let result = level * roundLength;
 
       this.setState({ outOfCash: true });
       this.setState({ result: result });
@@ -81,7 +126,7 @@ class App extends Component {
     }
   };
 
-  startStack = (e) => {
+  startStackSubmit = (e) => {
     let startStack = e.startStack;
     let roundLength = e.roundLength;
     let buyin = e.buyin;
@@ -162,29 +207,59 @@ class App extends Component {
         console.log("this be your error brah" + error);
       });
   };
+  setLocation = (e, f) => {
+    console.log(e, f);
+
+    f === "country"
+      ? this.setState({ country: e })
+      : this.setState({ region: e });
+  };
+  setArea = () => {
+    this.setState({ location: true });
+  };
   render() {
-    return this.state.chipCount === "p" ? (
+    return (
       <div className="App">
-        <StartForm startStack={this.startStack} tourns={this.state.tourns} />
-      </div>
-    ) : this.state.outOfCash === false ? (
-      <div className="App">
-        <ChipForm
+        <AddLocation
+          setLocation={this.setLocation}
+          usaAreas={this.state.usaAreas}
+          regionSet={this.state.region}
+          setArea={this.setArea}
+          tourns={this.state.tourns}
+          casinos={this.state.casinos}
+          tournsLoaded={this.state.tournsLoaded}
+          casinosLoaded={this.state.casinosLoaded}
+          startStackSubmit={this.startStackSubmit}
           level={this.state.level}
           chipCount={this.state.chipCount}
-          handleSubmit={this.handleSubmit}
-          startStack={this.startStack}
         />
       </div>
-    ) : (
-      <TournReview
-        result={this.state.result}
-        restartForm={this.restartForm}
-        saveData={this.saveData}
-        perDollar={this.state.perDollar}
-      />
     );
   }
 }
 
 export default App;
+
+// this.state.location === false ? (
+
+// ) : this.state.chipCount === "p" ? (
+//   <div className="App">
+//     <StartForm startStack={this.startStack} tourns={this.state.tourns} />
+//   </div>
+// ) : this.state.outOfCash === false ? (
+//   <div className="App">
+//     <ChipForm
+//       level={this.state.level}
+//       chipCount={this.state.chipCount}
+//       handleSubmit={this.handleSubmit}
+//       startStack={this.startStack}
+//     />
+//   </div>
+// ) : (
+//   <TournReview
+//     result={this.state.result}
+//     restartForm={this.restartForm}
+//     saveData={this.saveData}
+//     perDollar={this.state.perDollar}
+//   />
+// );
