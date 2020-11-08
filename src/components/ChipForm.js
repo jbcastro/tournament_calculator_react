@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Form, Text } from "informed";
+import TournReview from "./TournReview";
 
 const ChipForm = (props) => {
   const initialChips = props.startStack;
@@ -10,6 +11,7 @@ const ChipForm = (props) => {
   const [eachLevelBlinds, setEachLevelBlinds] = React.useState({});
   const [outOfChips, setOutOfChips] = useState(false);
   const roundLength = props.roundLength;
+  const [infoToBeSaved, setInfoToBeSaved] = React.useState({});
   // console.log(props.startingInfo);
   const handleSubmit = (e) => {
     let smallBlind = Number(e.smallBlind);
@@ -44,8 +46,28 @@ const ChipForm = (props) => {
         [antee]: ante,
       });
     } else {
+      const level = currentLevelAndStack.level;
       setOutOfChips(true);
+      const timeLasted = level * roundLength;
+      setInfoToBeSaved({
+        time: timeLasted,
+      });
     }
+  };
+
+  const Review = () => {
+    return (
+      <div>
+        You out of cash homie<br></br>
+        You lasted {infoToBeSaved.time} minutes<br></br>
+        <Form onSubmit={props.saveData}>
+          <label>
+            <Text field="name" type="text" />
+          </label>
+          <button type="submit">Submit</button>
+        </Form>
+      </div>
+    );
   };
 
   //this is where you left off. Should have the info added BEFORE the tournament calc
@@ -55,7 +77,7 @@ const ChipForm = (props) => {
 
   //todo set state of stuff here that you have so when the next component is loaded
   //it is already set
-  return (
+  return outOfChips == false ? (
     <div>
       <br></br>
       Level {currentLevelAndStack.level}
@@ -78,6 +100,31 @@ const ChipForm = (props) => {
         </label>
         <button type="submit">Submit</button>
       </Form>
+    </div>
+  ) : (
+    <div>
+      <br></br>
+      Level {currentLevelAndStack.level}
+      <br></br>
+      Chip Count: {currentLevelAndStack.chipCount}
+      <Form onSubmit={handleSubmit}>
+        <p></p>
+
+        <label>
+          Level {props.level} Small Blind:
+          <Text field="smallBlind" type="number" initialValue="10" />
+        </label>
+        <label>
+          Level {props.level} Big Blind:
+          <Text field="bigBlind" type="number" initialValue="10" />
+        </label>
+        <label>
+          Level {props.level} Ante:
+          <Text field="ante" type="number" initialValue="0" />
+        </label>
+        <button type="submit">Submit</button>
+      </Form>
+      <Review />
     </div>
   );
 };

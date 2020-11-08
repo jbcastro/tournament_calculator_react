@@ -28,6 +28,7 @@ const AddLocation = (props) => {
   const steve = (e, f) => {
     setAllLocation({ ...allLocation, [f]: e });
     props.setLocation(e, f);
+    console.log(e, f);
   };
   useEffect(() => {
     setAllLocation({ ...allLocation, area: {} });
@@ -40,10 +41,13 @@ const AddLocation = (props) => {
   const [showAddButton, setShowAddButton] = useState(false);
   const jim = (e, f) => {
     setAllLocation({ ...allLocation, [f]: e.target.value });
+    props.setLocation(e, f);
+    // console.log(e, [f]);
   };
   const ryan = (e, f) => {
     setAllLocation({ ...allLocation, [f]: e.target.value });
     setShowAddButton(true);
+    props.setLocation(e, f);
   };
 
   // console.log(props.regionSet);
@@ -96,37 +100,14 @@ const AddLocation = (props) => {
   useEffect(() => {
     setReadyToAdd(false);
   }, [allLocation]);
-  // useEffect(() => {
-  //   setFilteredTourns({...filteredTourns,toune:Object.values(tourns).filter(item)=>item.casino==allLocation.casino})
-  // }, [allLocation.casino]);
-  // if (tourns) {
-  //   return (hu = Object.values(tourns).filter(
-  //     (item) => item.casino == allLocation.casino
-  //   ));
-  // }
 
   const listItems = Object.values(filteredTourns.toune);
 
-  // useEffect(() => {
-  //   jimi = (
-  //     <select>
-  //       {bill.map((item, i) => (
-  //         <option key={i} value={item.casino}>
-  //           {item.casino}
-  //         </option>
-  //       ))}
-  //     </select>
-  //   );
-  // }, [allLocation.area]);
-
+  const saverr = () => {
+    console.log("dduuueee");
+  };
   return (
     <div>
-      FROM HERE you are going to add all the casinos in a drop down (nay expand
-      button) and when one is selected THEN show all the tounrs for that casinos
-      then the person can continue if they want. Also we'll need to add days of
-      the week to the front end and back end And also maybe just combine this
-      page and chip start page
-      <br></br>
       <CountryDropdown
         value={allLocation.country}
         onChange={(e) => steve(e, "country")}
@@ -179,7 +160,11 @@ const AddLocation = (props) => {
       </form>
       {readyToAdd === true ? (
         <span>
-          <StartForm startStackSubmit={props.startStackSubmit}></StartForm>
+          <StartForm
+            startStackSubmit={props.startStackSubmit}
+            saveData={props.saveData}
+            allLocation={allLocation}
+          ></StartForm>
         </span>
       ) : null}
       <TournCardsData listItems={listItems}></TournCardsData>

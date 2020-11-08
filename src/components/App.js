@@ -7,6 +7,7 @@ import TournReview from "./TournReview";
 import AddLocation from "./AddLocation";
 import USAAreas from "../AreasApi";
 let api = "http://localhost:5000/api";
+let api2 = "https://thawing-sands-62094.herokuapp.com/api";
 
 //The Codeslinger's creed
 //I do not click with my hand; he who clicks with his hand has forgotten the face of his father
@@ -53,6 +54,7 @@ class App extends Component {
     this.saveData = this.saveData.bind(this);
     this.setLocation = this.setLocation.bind(this);
     this.setArea = this.setArea.bind(this);
+    this.addOneContinue = this.addOneContinue.bind(this);
   }
 
   componentDidMount() {
@@ -208,14 +210,23 @@ class App extends Component {
       });
   };
   setLocation = (e, f) => {
-    console.log(e, f);
-
-    f === "country"
-      ? this.setState({ country: e })
-      : this.setState({ region: e });
+    if (f === "country") {
+      this.setState({ country: e });
+    } else if (f === "region") {
+      this.setState({ region: e });
+    } else {
+      if (f === "area") {
+        this.setState({ area: e.target.value });
+      } else {
+        this.setState({ casino: e.target.value });
+      }
+    }
   };
   setArea = () => {
     this.setState({ location: true });
+  };
+  addOneContinue = (e) => {
+    console.log(e.country);
   };
   render() {
     return (
@@ -232,6 +243,8 @@ class App extends Component {
           startStackSubmit={this.startStackSubmit}
           level={this.state.level}
           chipCount={this.state.chipCount}
+          saveData={this.saveData}
+          addOneContinue={this.addOneContinue}
         />
       </div>
     );
