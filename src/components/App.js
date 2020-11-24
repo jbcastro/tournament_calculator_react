@@ -6,8 +6,8 @@ import StartForm from "./StartForm";
 import TournReview from "./TournReview";
 import AddLocation from "./AddLocation";
 import USAAreas from "../AreasApi";
-let api = "http://localhost:5000/api";
-let api2 = "https://thawing-sands-62094.herokuapp.com/api";
+
+
 
 //The Codeslinger's creed
 //I do not click with my hand; he who clicks with his hand has forgotten the face of his father
@@ -33,7 +33,9 @@ class App extends Component {
       result: {},
       tourns: null,
       startingStack: {},
-      buyin: {},
+      buyIn: {},
+      occurrence:{},
+      tournName:{},
       perDollar: {},
       location: false,
       country: {},
@@ -55,6 +57,8 @@ class App extends Component {
     this.setLocation = this.setLocation.bind(this);
     this.setArea = this.setArea.bind(this);
     this.addOneContinue = this.addOneContinue.bind(this);
+    this.handleDelete = this.handleDelete.bind(this)
+    
   }
 
   componentDidMount() {
@@ -123,7 +127,7 @@ class App extends Component {
 
       this.setState({ outOfCash: true });
       this.setState({ result: result });
-      let perDollar = result / this.state.buyin;
+      let perDollar = result / this.state.buyIn;
       this.setState({ perDollar: perDollar });
     }
   };
@@ -131,11 +135,16 @@ class App extends Component {
   startStackSubmit = (e) => {
     let startStack = e.startStack;
     let roundLength = e.roundLength;
-    let buyin = e.buyin;
+    let buyIn = e.buyIn;
+    let occurrence=e.occurrence
+    let tournName=e.tournName
     this.setState({ chipCount: startStack });
     this.setState({ roundLength: roundLength });
     this.setState({ startingStack: startStack });
-    this.setState({ buyin: buyin });
+    this.setState({ buyIn: buyIn });
+    this.setState({occurrence:occurrence})
+    this.setState({tournName:tournName})
+
   };
   restartForm = () => {
     // this.callBackendAPI()
@@ -149,32 +158,35 @@ class App extends Component {
     this.setState({ outOfCash: false });
     this.setState({ roundLength: {} });
     this.setState({ result: {} });
-    this.setState({ buyin: {} });
+    this.setState({ buyIn: {} });
     this.setState({ perDollar: {} });
     this.setState({ startStack: {} });
   };
-  saveData = (e) => {
-    let name = e.name;
-    let casino = e.casino;
-    let country = e.country;
-    let state = e.state;
-    let area = e.area;
-    let city = e.city;
-    console.log(country);
+  saveData = (e,f,g) => {
+    
+   console.log(e)
+   let name = this.state.tournName
 
     let newItem = {
-      name: name,
-      casino: casino,
-      country: country,
-      state: state,
-      area: area,
-      city: city,
+      name: this.state.tournName,
+      casino: this.state.casino,
+      country: this.state.country,
+      region: this.state.region,
+      area: this.state.area,
+      city: this.state.city,
       starting: this.state.startingStack,
       roundLength: this.state.roundLength,
-      resultLength: this.state.result,
-      score: this.state.result,
-      perDollar: this.state.perDollar,
-      buyin: this.state.buyin,
+      
+      score: g.time,
+      
+      buyIn: this.state.buyIn,
+      allBlinds:f,
+      resultLength:g.time,
+      perDollar:g.perDollar,
+      level:g.level,
+      notes:e.notes,
+      occurance:this.state.occurrence
+      //level is the level you busted
     };
 
     console.log(newItem);
@@ -209,6 +221,8 @@ class App extends Component {
         console.log("this be your error brah" + error);
       });
   };
+
+  //
   setLocation = (e, f) => {
     if (f === "country") {
       this.setState({ country: e });
@@ -217,8 +231,12 @@ class App extends Component {
     } else {
       if (f === "area") {
         this.setState({ area: e.target.value });
-      } else {
+      } else if(f==="casino") {
         this.setState({ casino: e.target.value });
+       
+      }else if(f==="city") {
+       
+        this.setState({city:e})
       }
     }
   };
@@ -228,6 +246,9 @@ class App extends Component {
   addOneContinue = (e) => {
     console.log(e.country);
   };
+  handleDelete = (e)=>{
+
+  }
   render() {
     return (
       <div className="App">
@@ -245,6 +266,7 @@ class App extends Component {
           chipCount={this.state.chipCount}
           saveData={this.saveData}
           addOneContinue={this.addOneContinue}
+
         />
       </div>
     );

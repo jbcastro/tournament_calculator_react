@@ -1,0 +1,8 @@
+Need to figure out a way to add "other" in start form
+
+time lasted
+all blinds
+level
+
+
+Ok so there is a problem with this app and the local database, need to fix that and also add occurance

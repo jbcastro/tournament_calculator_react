@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { Form, Text } from "informed";
+import React, { useState, useEffect  } from "react";
+import { Form, Text,useFormState,useArrayField } from "informed";
 import TournReview from "./TournReview";
 
 const ChipForm = (props) => {
   const initialChips = props.startStack;
+  const buyIn=props.buyIn
   const [currentLevelAndStack, setCurrentLevelAndStack] = React.useState({
     level: 1,
     chipCount: initialChips,
@@ -11,7 +12,9 @@ const ChipForm = (props) => {
   const [eachLevelBlinds, setEachLevelBlinds] = React.useState({});
   const [outOfChips, setOutOfChips] = useState(false);
   const roundLength = props.roundLength;
-  const [infoToBeSaved, setInfoToBeSaved] = React.useState({});
+  const [infoToBeSaved, setInfoToBeSaved] = React.useState({
+    buyIn:buyIn
+  });
   // console.log(props.startingInfo);
   const handleSubmit = (e) => {
     let smallBlind = Number(e.smallBlind);
@@ -49,34 +52,17 @@ const ChipForm = (props) => {
       const level = currentLevelAndStack.level;
       setOutOfChips(true);
       const timeLasted = level * roundLength;
+      const perDollar = Number(timeLasted)/Number(buyIn)
       setInfoToBeSaved({
         time: timeLasted,
+        perDollar:perDollar,
+        buyIn:buyIn,level:level,
+        
       });
     }
   };
 
-  const Review = () => {
-    return (
-      <div>
-        You out of cash homie<br></br>
-        You lasted {infoToBeSaved.time} minutes<br></br>
-        <Form onSubmit={props.saveData}>
-          <label>
-            <Text field="name" type="text" />
-          </label>
-          <button type="submit">Submit</button>
-        </Form>
-      </div>
-    );
-  };
 
-  //this is where you left off. Should have the info added BEFORE the tournament calc
-  //that way when this ends it can show a review of the tourny before submitting
-  //maybe when "out of chips" is true all the info gets set to the state for submitting
-  //also need to clear all the booleans when the casino/area (done except add one button)
-
-  //todo set state of stuff here that you have so when the next component is loaded
-  //it is already set
   return outOfChips == false ? (
     <div>
       <br></br>
@@ -122,9 +108,15 @@ const ChipForm = (props) => {
           Level {props.level} Ante:
           <Text field="ante" type="number" initialValue="0" />
         </label>
-        <button type="submit">Submit</button>
+        {/* <button type="submit">Submit</button> */}
       </Form>
-      <Review />
+      <TournReview 
+      currentLevelAndStack={currentLevelAndStack}
+      infoToBeSaved={infoToBeSaved}
+      saveData={props.saveData}
+      eachLevelBlinds={eachLevelBlinds}
+      
+      />
     </div>
   );
 };

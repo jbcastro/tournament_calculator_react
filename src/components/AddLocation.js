@@ -17,6 +17,7 @@ const AddLocation = (props) => {
     region: {},
     area: {},
     casino: null,
+    city:{}
   });
   const [readyToAdd, setReadyToAdd] = useState(false);
   const addingOne = (e) => {
@@ -45,10 +46,20 @@ const AddLocation = (props) => {
     // console.log(e, [f]);
   };
   const ryan = (e, f) => {
-    setAllLocation({ ...allLocation, [f]: e.target.value });
     setShowAddButton(true);
-    props.setLocation(e, f);
+    let city;
+    const laura =allAreaCasinos.allInfo.filter((item)=>
+      {
+        if(item.name === e.target.value){
+        return city =item.city
+      }}
+      
+    )
+    setAllLocation({ ...allLocation, [f]: e.target.value,"city": city});
+    props.setLocation(e,f)
+    props.setLocation(city,"city")
   };
+  
 
   // console.log(props.regionSet);
   let selectableAreas = [];
@@ -75,6 +86,11 @@ const AddLocation = (props) => {
       ),
     });
   }, [allLocation.area]);
+
+
+ 
+
+
   const tourns = props.tourns;
   const [filteredTourns, setFilteredTourns] = React.useState({
     toune: {},
@@ -88,7 +104,9 @@ const AddLocation = (props) => {
   }, [props]);
 
   useEffect(() => {
+    
     if (load == true) {
+    
       setFilteredTourns({
         ...filteredTourns,
         toune: Object.values(tourns).filter(
@@ -96,7 +114,19 @@ const AddLocation = (props) => {
         ),
       });
     }
-  }, [allLocation.casino]);
+  }, [allLocation.casino],[props.tourns]);
+  useEffect(() => {
+    if (load == true) {
+    
+      setFilteredTourns({
+        ...filteredTourns,
+        toune: Object.values(tourns).filter(
+          (item) => item.casino == allLocation.casino
+        ),
+      });
+    }
+  }, [props.tourns]);
+
   useEffect(() => {
     setReadyToAdd(false);
   }, [allLocation]);
@@ -106,6 +136,7 @@ const AddLocation = (props) => {
   const saverr = () => {
     console.log("dduuueee");
   };
+
   return (
     <div>
       <CountryDropdown
@@ -113,11 +144,13 @@ const AddLocation = (props) => {
         onChange={(e) => steve(e, "country")}
         priorityOptions={["US", "CA", "GB"]}
       />
+      <br></br>
       <RegionDropdown
         country={allLocation.country}
         value={allLocation.region}
         onChange={(e) => steve(e, "region")}
       />
+      <br></br>
       {/* {viewStuff} */}
       <form id="formz" onSubmit={addingOne}>
         {/* asfg */}
@@ -133,7 +166,7 @@ const AddLocation = (props) => {
             </option>
           ))}
         </select>
-
+        <br></br>
         <select
           onChange={(e) => ryan(e, "casino")}
           id="casino"
@@ -164,6 +197,7 @@ const AddLocation = (props) => {
             startStackSubmit={props.startStackSubmit}
             saveData={props.saveData}
             allLocation={allLocation}
+            setLocation={props.setLocation}
           ></StartForm>
         </span>
       ) : null}
