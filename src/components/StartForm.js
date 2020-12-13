@@ -29,6 +29,9 @@ const StartForm = (props) => {
       buyIn:e.buyIn
     });
   };
+  const clearForm = ()=>{
+    setStartingInfoSubmitted(true);
+  }
   if (staringInfo.occurrence == "other") {
     console.log("dude");
   }
@@ -89,14 +92,17 @@ const StartForm = (props) => {
         />
         <button type="submit">Submit</button>
       </Form>
+     
     </div>
   ) : (
-    <ChipForm
-      startStack={staringInfo.startStack}
-      roundLength={staringInfo.roundLength}
-      saveData={props.saveData}
-      buyIn={staringInfo.buyIn}
-    ></ChipForm>
+    <div><ChipForm
+    startStack={staringInfo.startStack}
+    roundLength={staringInfo.roundLength}
+    saveData={props.saveData}
+    buyIn={staringInfo.buyIn}
+  ></ChipForm>
+  <button onClick={clearForm}>Clear</button></div>
+    
   );
 };
 export default StartForm;

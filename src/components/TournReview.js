@@ -15,6 +15,9 @@ const saveAll = (e)=>{
   {props.saveData(e,eachLevelBlinds,infoToBeSaved)}
 
 }
+const clearForm = ()=>{
+  console.log("clearing brah")
+}
   
   return (
         <div>

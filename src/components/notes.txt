@@ -1,8 +1,12 @@
 Need to figure out a way to add "other" in start form
 
-time lasted
-all blinds
-level
+time lasted all blinds level
 
 
 Ok so there is a problem with this app and the local database, need to fix that and also add occurance
+I dunno what that means above
+
+However we need to add to the database time lasted, all blinds, level
+
+
+Added a clear button will have to mess around with it later
