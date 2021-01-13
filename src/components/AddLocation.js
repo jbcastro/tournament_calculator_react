@@ -110,7 +110,7 @@ const AddLocation = (props) => {
       setFilteredTourns({
         ...filteredTourns,
         toune: Object.values(tourns).filter(
-          (item) => item.casino == allLocation.casino
+          (item) => item.casino == allLocation.casino && item.area ==allLocation.area
         ),
       });
     }
@@ -121,7 +121,7 @@ const AddLocation = (props) => {
       setFilteredTourns({
         ...filteredTourns,
         toune: Object.values(tourns).filter(
-          (item) => item.casino == allLocation.casino
+          (item) => item.casino == allLocation.casino && item.area ==allLocation.area
         ),
       });
     }

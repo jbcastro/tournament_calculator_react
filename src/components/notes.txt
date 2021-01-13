@@ -10,3 +10,7 @@ However we need to add to the database time lasted, all blinds, level
 
 
 Added a clear button will have to mess around with it later
+
+1/12
+add something for each "occurance" ie if it is daily what time, weekly what day, monthly what day (ie last Sunday), bi-yearly, one time. Need to change backend as well
+First thing I should do is combine front end and back end

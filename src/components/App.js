@@ -7,6 +7,7 @@ import TournReview from "./TournReview";
 import AddLocation from "./AddLocation";
 import USAAreas from "../AreasApi";
 
+let api = "http://localhost:5000/api";
 
 
 //The Codeslinger's creed
@@ -48,6 +49,7 @@ class App extends Component {
       tournsLoaded: false,
       casinosLoaded: false,
       curItem: {},
+      startTime:{}
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -136,14 +138,18 @@ class App extends Component {
     let startStack = e.startStack;
     let roundLength = e.roundLength;
     let buyIn = e.buyIn;
-    let occurrence=e.occurrence
+    let occurrence
+    e.occurrence==="other" ? (occurrence={occurrence:"other",when:e.whenOther}):(occurrence=e.occurrence)
+    e.occurrence==="daily"?(occurrence={occurrence:"daily",when:e.whenDailyDay}):(occurrence=e.occurrence)
     let tournName=e.tournName
+    let startTime = e.startTime
     this.setState({ chipCount: startStack });
     this.setState({ roundLength: roundLength });
     this.setState({ startingStack: startStack });
     this.setState({ buyIn: buyIn });
     this.setState({occurrence:occurrence})
     this.setState({tournName:tournName})
+    this.setState({startTime:startTime})
 
   };
   restartForm = () => {
@@ -185,7 +191,8 @@ class App extends Component {
       perDollar:g.perDollar,
       level:g.level,
       notes:e.notes,
-      occurance:this.state.occurrence
+      occurance:this.state.occurrence,
+      startTime:this.state.startTime
       //level is the level you busted
     };
 

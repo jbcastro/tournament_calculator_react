@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Text, Select, Option,useFormState  } from "informed";
+import { Form, Text, Select, Option,useFormState,Relevant   } from "informed";
 import ChipForm from "./ChipForm";
 
 const StartForm = (props) => {
@@ -14,27 +14,39 @@ const StartForm = (props) => {
     roundLength: {},
     tournName: {},
     occurrence: {},
-    buyIn:{}
+    buyIn:{},
+    startTime:{}
   });
   const submitForm = (e) => {
     props.startStackSubmit(e);
     setStartingInfoSubmitted(false);
-
+    let occurrence
+    e.occurrence==="other" ? (occurrence={occurrence:"other",when:e.whenOther}):(occurrence=e.occurrence)
+    e.occurrence==="daily"?(occurrence={occurrence:"daily",when:e.whenDailyDay}):(occurrence=e.occurrence)
+  console.log(occurrence)
+     console.log("true")
     setStartingInfo({
       ...staringInfo,
       roundLength: e.roundLength,
       startStack: e.startStack,
       tournName: e.tournName,
       occurrence: e.occurrence,
-      buyIn:e.buyIn
-    });
+      buyIn:e.buyIn,
+      startTime:e.startTime
+    })
+   
+    
+  
+ 
   };
+ 
   const clearForm = ()=>{
     setStartingInfoSubmitted(true);
   }
   if (staringInfo.occurrence == "other") {
     console.log("dude");
   }
+  
   const ComponentUsingFormState = () => {
     const formState = useFormState();
     return (
@@ -43,6 +55,8 @@ const StartForm = (props) => {
       </pre>
     );
   };
+
+ 
 
   //need to make choosing the "other" option do something
 
@@ -55,8 +69,10 @@ const StartForm = (props) => {
         <h1>TOURNAMENT CALCULATOR!!1!!!!!!</h1>
         Tournament Name:
         <Text field="tournName" type="text" validate={validate} initialValue="laura"/>
+        Time:
+        <Text field="startTime" type = "time" validate={validate}/>
         Occurance:
-        <Select field="occurrence">
+        <Select field="occurrence" validate={validate} >
           <Option value="" disabled>
             Select One...
           </Option>
@@ -69,6 +85,32 @@ const StartForm = (props) => {
           <Option value="onetime">one time</Option>
           <Option value="other">other</Option>
         </Select>
+        <Relevant when={({values})=>values.occurrence =="other"}>
+          When does it happen?
+        <Text
+          field="whenOther"
+          type="text"
+          validate={validate}
+          
+        />
+        </Relevant>
+        <Relevant when={({values})=>values.occurrence =="daily"}>
+        <Select field="whenDailyDay" validate={validate} >
+          <Option value="" disabled>
+            Select One...
+          </Option>
+          <Option value="monday">Monday</Option>
+          <Option value="tuesday">Tuesday</Option>
+          <Option value="wednesday">Wednesday</Option>
+          <Option value="thursday">Thursday</Option>
+          <Option value="friday">Friday</Option>
+          <Option value="saturday">Saturday</Option>
+          <Option value="sunday">Sunday</Option>
+         
+        </Select>
+       
+        </Relevant>
+        
         Starting Stack:
         <Text
           field="startStack"
